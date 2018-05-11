@@ -1,58 +1,82 @@
-
 # Create your models here.
 from django.contrib.gis.db import models
-from django.forms import ModelForm
-from django.contrib.gis import forms
 
-class WorldBorder(models.Model):
-    # Regular Django fields corresponding to the attributes in the
-    # world borders shapefile.
-    name = models.CharField(max_length=50)
-    area = models.IntegerField()
-    pop2005 = models.IntegerField('Population 2005')
-    fips = models.CharField('FIPS Code', max_length=2)
-    iso2 = models.CharField('2 Digit ISO', max_length=2)
-    iso3 = models.CharField('3 Digit ISO', max_length=3)
-    un = models.IntegerField('United Nations Code')
-    region = models.IntegerField('Region Code')
-    subregion = models.IntegerField('Sub-Region Code')
-    lon = models.FloatField()
-    lat = models.FloatField()
+class Intervenant(models.Model):
+    objectid = models.AutoField(primary_key=True)
+    nom = models.CharField(max_length=100)
+    adresse = models.CharField(max_length=100)
+    npa = models.IntegerField()
+    lieu = models.CharField(max_length=100)
+    responsable = models.CharField(max_length=100)
+    telephone = models.IntegerField()
+    mobile = models.IntegerField()
+    fax = models.IntegerField()
+    email = models.EmailField()
 
-    # GeoDjango-specific: a geometry field (MultiPolygonField)
-    mpoly = models.MultiPolygonField()
-
-    # Returns the string representation of the model.
     def __str__(self):
-        return self.name
+        return str(self.objectid) + ' ' + self.nom
+
+class Service(models.Model):
+    objectid = models.AutoField(primary_key=True)
+    archeologue = models.BooleanField()
+    texteemail = models.TextField()
+    nom = models.CharField(max_length=100)
+    email = models.EmailField()
+    valideur = models.BooleanField()
+    administrateur = models.BooleanField()
+
+    def __str__(self):
+        return str(self.objectid) + ' ' + self.nom
+
+class TypeEmplacement(models.Model):
+    objectid = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.objectid) + ' ' + self.description
+
+class Demande(models.Model):
+    objectid = models.AutoField(primary_key=True)
+    paye = models.BooleanField()
+    validetermine = models.BooleanField()
+    datedebut = models.DateField()
+    datefin = models.DateField()
+    datefineffective = models.DateField()
+    longueur = models.FloatField()
+    largeur = models.FloatField()
+    marquageroute = models.BooleanField()
+    espacevert = models.BooleanField()
+    factureentreprise = models.BooleanField()
+    entreprise = models.ForeignKey(Intervenant, on_delete=models.SET_NULL, null=True, related_name='%(class)s_entreprise')
+    maitreouvrage = models.ForeignKey(Intervenant, on_delete=models.SET_NULL, null=True, related_name='%(class)s_maitreouvrage')
+    typeemplacement = models.ForeignKey(TypeEmplacement, on_delete=models.SET_NULL, null=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return str(self.objectid)
+
+class Validation(models.Model):
+    objectid = models.AutoField(primary_key=True)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    demande = models.ForeignKey(Demande, on_delete=models.CASCADE)
+    effectue = models.BooleanField()
+    accepte = models.BooleanField()
+    remarque = models.TextField()
+
+    def __str__(self):
+            return str(self.objectid) + ' ' + str(self.service) + '-' + str(self.demande)
 
 class PermisFouille(models.Model):
-
-    objectid = models.IntegerField()
+    objectid = models.AutoField(primary_key=True)
     hkoord  = models.FloatField()
     vkoord = models.FloatField()
     archeologique = models.IntegerField()
     archeologique_existant = models.IntegerField()
     rue_ref = models.IntegerField()
     ruenum_ref = models.IntegerField()
-    demande_ref = models.IntegerField()
+    demande = models.ForeignKey(Demande, on_delete=models.PROTECT)
     geom = models.PointField(srid=2056)
-
 
     # Returns the string representation of the model.
     def __str__(self):
         return str(self.objectid)
-
-class SitOpenLayersWidget(forms.OpenLayersWidget):
-    class Media:
-        js = ('openlayers.js')
-
-class PermisFouilleForm(forms.Form):
-    geom = forms.PointField(widget=
-        forms.OpenLayersWidget(attrs={
-            'map_width': 800,
-            'map_height': 500,
-            'map_srid': 2056}))
-    # class Meta:
-    #     model = PermisFouille
-    #     fields = ['objectid', 'geom']
