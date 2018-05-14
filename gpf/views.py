@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect,HttpResponse
-from .models import PermisFouille,PermisFouilleForm
-from django.forms import modelformset_factory
+from .models import PermisFouille
+from .forms import PermisFouilleForm
 
 def index(request):
     return HttpResponse("Application de Gestion des Permis de Fouille")
