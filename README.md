@@ -1,9 +1,16 @@
 # geomapshark - a powerful geoform tool built with django
 
+## Getting started
+
+Clone the repository.
+
+For windows:
+
+`python -m pipenv install`
+
 ## Documentation
 
-### Windows specific configuration:
-set GDAL_DATA environnement variable (for example: C:\Program Files\QGIS 3.0\share\gdal)
+Rename `sample.env.yaml` to `env.yaml` and modifiy it according to your specific configuration.
 
 ### Setup database
 
@@ -17,4 +24,4 @@ CREATE EXTENSION postgis;
 \q
 ```
 
-`py -3 .\manage.py createsuperuser`
+`python .\manage.py createsuperuser`
