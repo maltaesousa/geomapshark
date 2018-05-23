@@ -1,82 +1,69 @@
 # Create your models here.
 from django.contrib.gis.db import models
+from django.contrib.auth.models import User
 
-class Intervenant(models.Model):
-    objectid = models.AutoField(primary_key=True)
-    nom = models.CharField(max_length=100)
-    adresse = models.CharField(max_length=100)
-    npa = models.IntegerField()
-    lieu = models.CharField(max_length=100)
-    responsable = models.CharField(max_length=100)
-    telephone = models.IntegerField()
-    mobile = models.IntegerField()
+class Actor(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+    zipcode = models.IntegerField()
+    city = models.CharField(max_length=100)
+    person_in_charge = models.CharField(max_length=100)
+    phone_fixed = models.IntegerField()
+    phone_mobile = models.IntegerField()
     fax = models.IntegerField()
     email = models.EmailField()
 
     def __str__(self):
-        return str(self.objectid) + ' ' + self.nom
+        return self.name
 
-class Service(models.Model):
-    objectid = models.AutoField(primary_key=True)
-    archeologue = models.BooleanField()
-    texteemail = models.TextField()
-    nom = models.CharField(max_length=100)
-    email = models.EmailField()
-    valideur = models.BooleanField()
-    administrateur = models.BooleanField()
+class Department(models.Model):
+    #Extend user model
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email_content = models.TextField()
+    #TODO: Put this things into groups
+    is_validator = models.BooleanField()
+    is_admin = models.BooleanField()
+    is_archeologist = models.BooleanField()
 
     def __str__(self):
-        return str(self.objectid) + ' ' + self.nom
+        return str(self.user)
 
-class TypeEmplacement(models.Model):
-    objectid = models.AutoField(primary_key=True)
+class SiteType(models.Model):
     description = models.CharField(max_length=100)
 
     def __str__(self):
-        return str(self.objectid) + ' ' + self.description
+        return self.description
 
-class Demande(models.Model):
-    objectid = models.AutoField(primary_key=True)
-    paye = models.BooleanField()
-    validetermine = models.BooleanField()
-    datedebut = models.DateField()
-    datefin = models.DateField()
-    datefineffective = models.DateField()
-    longueur = models.FloatField()
-    largeur = models.FloatField()
-    marquageroute = models.BooleanField()
-    espacevert = models.BooleanField()
-    factureentreprise = models.BooleanField()
-    entreprise = models.ForeignKey(Intervenant, on_delete=models.SET_NULL, null=True, related_name='%(class)s_entreprise')
-    maitreouvrage = models.ForeignKey(Intervenant, on_delete=models.SET_NULL, null=True, related_name='%(class)s_maitreouvrage')
-    typeemplacement = models.ForeignKey(TypeEmplacement, on_delete=models.SET_NULL, null=True)
+class PermitRequest(models.Model):
+    paid = models.BooleanField()
+    validated = models.BooleanField()
+    date_start = models.DateField()
+    date_end = models.DateField()
+    date_effective_end = models.DateField()
+    length = models.FloatField()
+    width = models.FloatField()
+    has_road_marking = models.BooleanField()
+    is_green_area = models.BooleanField()
+    invoiced = models.BooleanField()
+    company = models.ForeignKey(Actor, on_delete=models.SET_NULL, null=True, related_name='%(class)s_company')
+    project_owner = models.ForeignKey(Actor, on_delete=models.SET_NULL, null=True, related_name='%(class)s_project_owner')
+    sitetype = models.ForeignKey(SiteType, on_delete=models.SET_NULL, null=True)
     description = models.TextField()
-
-    def __str__(self):
-        return str(self.objectid)
-
-class Validation(models.Model):
-    objectid = models.AutoField(primary_key=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    demande = models.ForeignKey(Demande, on_delete=models.CASCADE)
-    effectue = models.BooleanField()
-    accepte = models.BooleanField()
-    remarque = models.TextField()
-
-    def __str__(self):
-            return str(self.objectid) + ' ' + str(self.service) + '-' + str(self.demande)
-
-class PermisFouille(models.Model):
-    objectid = models.AutoField(primary_key=True)
-    hkoord  = models.FloatField()
-    vkoord = models.FloatField()
-    archeologique = models.IntegerField()
-    archeologique_existant = models.IntegerField()
-    rue_ref = models.IntegerField()
-    ruenum_ref = models.IntegerField()
-    demande = models.ForeignKey(Demande, on_delete=models.PROTECT)
+    has_archeology = models.BooleanField()
+    has_existing_archeology = models.BooleanField()
+    road_ref = models.IntegerField()
+    road_number_ref = models.IntegerField()
     geom = models.PointField(srid=2056)
 
-    # Returns the string representation of the model.
     def __str__(self):
-        return str(self.objectid)
+        return 'Permit ' + str(self.id)
+
+class Validation(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    permitrequest = models.ForeignKey(PermitRequest, on_delete=models.CASCADE)
+    done = models.BooleanField()
+    accepted = models.BooleanField()
+    comment = models.TextField()
+
+    def __str__(self):
+        return str(self.department) + '-' + str(self.permitrequest)
