@@ -1,7 +1,11 @@
+{% extends "base_generic.html" %}
+{% load bootstrap4 %}
 {% load static %}
-<script src="{% static "gpf/app.js" %}"></script>
-<!-- <script src="{% static "gpf/openlayers.js" %}"></script> -->
-
-<form method="post">
-    {{ formset }}
-</form>
+{% block content %}
+{{ formset.media }}
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form formset %}
+        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
+    </form>
+{% endblock %}
