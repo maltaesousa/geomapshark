@@ -2,6 +2,7 @@ from django.contrib.gis import forms
 from .models import PermitRequest, Actor, Validation
 
 class SitOpenLayersWidget(forms.OSMWidget):
+    #TODO: not working yet
     class Media:
         js = ('ol-debug.js',)
 
