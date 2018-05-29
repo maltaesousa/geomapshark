@@ -6,7 +6,7 @@ class Actor(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, null=True)
     zipcode = models.IntegerField(null=True)
-    city = models.CharField(max_length=100), null=True
+    city = models.CharField(max_length=100, null=True)
     person_in_charge = models.CharField(max_length=100, null=True)
     phone_fixed = models.IntegerField(null=True)
     phone_mobile = models.IntegerField(null=True)
