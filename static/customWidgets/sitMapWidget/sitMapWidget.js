@@ -45,6 +45,14 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
     var jsonFormat = new ol.format.GeoJSON();
 
     function MapWidget(options) {
+
+        if (options.geom_name.indexOf('Collection') == -1) {
+          options.geom_name = options.geom_name.charAt(0).toUpperCase() + options.geom_name.slice(1).toLowerCase();
+        } else {
+          options.geom_name = "Multi" + options.geom_name.charAt(5) + options.geom_name.slice(6).toLowerCase();
+        }
+
+        console.log(options.geom_name);
         this.map = null;
         this.interactions = {draw: null, modify: null};
         this.typeChoices = false;
