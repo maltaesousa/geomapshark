@@ -17,7 +17,11 @@ class PermitRequestForm(forms.ModelForm):
                 'map_width': 800,
                 'map_height': 500,
                 'map_srid': 2056
-                }
+            }),
+            'date_start': forms.SelectDateWidget(),
+            'date_end': forms.SelectDateWidget(),
+            'date_effective_end': forms.SelectDateWidget(
+
             )
         }
 
