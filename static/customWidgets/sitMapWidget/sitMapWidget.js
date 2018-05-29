@@ -46,12 +46,13 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
 
     function MapWidget(options) {
 
-        if (options.geom_name.indexOf('Collection') == -1) {
+        if (!options.geom_name.includes('MULTI')) {
           options.geom_name = options.geom_name.charAt(0).toUpperCase() + options.geom_name.slice(1).toLowerCase();
+          console.log("la")
         } else {
-          options.geom_name = "Multi" + options.geom_name.charAt(5) + options.geom_name.slice(6).toLowerCase();
+          console.log("toto")
+          options.geom_name = "Multi" + options.geom_name.charAt(5).toUpperCase() + options.geom_name.slice(6).toLowerCase();
         }
-
         console.log(options.geom_name);
         this.map = null;
         this.interactions = {draw: null, modify: null};
@@ -147,6 +148,7 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
         // Initialize the draw interaction
         var geomType = this.options.geom_name;
         if (geomType === "Unknown" || geomType === "GeometryCollection") {
+            console.log("ici")
             // Default to Point, but create icons to switch type
             geomType = "Point";
             this.currentGeometryType = new GeometryTypeControl({widget: this, type: "Point", active: true});
