@@ -4,8 +4,8 @@
 {% block content %}
 {{ formset.media }}
     <form method="post">
+        {% buttons submit='Enregistrer' reset="Annuler" %}{% endbuttons %}
         {% csrf_token %}
         {% bootstrap_form formset %}
-        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
     </form>
 {% endblock %}
