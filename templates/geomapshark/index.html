@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+{% block sidebar %}
+{% if apps %}
+    <ul class="sidebar-nav">
+{% for app in apps %}
+        <li><a href="/{{ app }}/">{{ app }}</a></li>
+{% endfor %}
+    </ul>
+{% else %}
+    <p>No apps are available.</p>
+{% endif %}
+{% endblock %}
