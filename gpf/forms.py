@@ -2,9 +2,11 @@ from django.contrib.gis import forms
 from .models import PermitRequest, Actor, Validation
 
 class SitOpenLayersWidget(forms.OSMWidget):
-    #TODO: not working yet
-    class Media:
-        js = ('ol-debug.js',)
+
+    @property
+    def media(self):
+        return forms.Media(css={'all': ('libs/js/openlayers/ol.css',)},
+                           js=('libs/js/openlayers/ol-debug.js', 'customWidgets/sitMapWidget/sitMapWidget.js'))
 
 class PermitRequestForm(forms.ModelForm):
     class Meta:
@@ -15,7 +17,11 @@ class PermitRequestForm(forms.ModelForm):
                 'map_width': 800,
                 'map_height': 500,
                 'map_srid': 2056
-                }
+            }),
+            'date_start': forms.SelectDateWidget(),
+            'date_end': forms.SelectDateWidget(),
+            'date_effective_end': forms.SelectDateWidget(
+
             )
         }
 
