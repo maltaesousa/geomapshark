@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'bootstrap4',
-    'django_bootstrap_datetimepicker',
     'gpf'
 ]
 
