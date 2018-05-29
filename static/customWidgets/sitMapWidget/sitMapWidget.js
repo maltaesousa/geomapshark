@@ -46,6 +46,7 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
 
     function MapWidget(options) {
 
+        // TODO: Nettoyer ce bordel :)
         if (!options.geom_name.includes('MULTI')) {
           options.geom_name = options.geom_name.charAt(0).toUpperCase() + options.geom_name.slice(1).toLowerCase();
           console.log("la")
