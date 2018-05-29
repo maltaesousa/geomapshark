@@ -2,9 +2,11 @@ from django.contrib.gis import forms
 from .models import PermitRequest, Actor, Validation
 
 class SitOpenLayersWidget(forms.OSMWidget):
-    #TODO: not working yet
-    class Media:
-        js = ('ol-debug.js',)
+
+    @property
+    def media(self):
+        return forms.Media(css={'all': ('libs/js/openlayers/ol.css',)},
+                           js=('libs/js/openlayers/ol-debug.js', 'customWidgets/sitMapWidget/sitMapWidget.js'))
 
 class PermitRequestForm(forms.ModelForm):
     class Meta:
