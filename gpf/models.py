@@ -1,6 +1,6 @@
 # Create your models here.
 from django.contrib.gis.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 
 class Actor(models.Model):
     name = models.CharField(max_length=100)
@@ -17,8 +17,8 @@ class Actor(models.Model):
         return self.name
 
 class Department(models.Model):
-    #Extend user model
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    #Extend group model
+    group = models.OneToOneField(Group, on_delete=models.CASCADE)
     email_content = models.TextField()
     #TODO: Put this things into groups
     is_validator = models.BooleanField()
