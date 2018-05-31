@@ -1,6 +1,6 @@
 # Create your models here.
 from django.contrib.gis.db import models
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 
 class Actor(models.Model):
     name = models.CharField(max_length=100)
@@ -12,6 +12,7 @@ class Actor(models.Model):
     phone_mobile = models.IntegerField(null=True)
     fax = models.IntegerField(null=True)
     email = models.EmailField(null=True)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
