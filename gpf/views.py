@@ -5,7 +5,7 @@ from .models import PermitRequest
 from .forms import PermitRequestForm
 
 from django.views.generic.list import ListView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 
 
@@ -17,15 +17,19 @@ def index(request):
 def edit(request):
 
     if request.method == 'POST':
-        formset = PermitRequestForm(request.POST, request.FILES)
-        if formset.is_valid():
-            formset.save()
+        form = PermitRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
             # do something.
     else:
-        formset = PermitRequestForm()
-    return render(request, 'gpf/edit.html', {'formset': formset})
+        form = PermitRequestForm()
+    return render(request, 'gpf/edit.html', {'form': form})
 
-@method_decorator(login_required, name='dispatch')
+#List of decorators for the class based view
+decorators = [login_required, permission_required('gpf.change_permitrequest')]
+
+#This is the way to decorate a class based view
+@method_decorator(decorators, name='dispatch')
 class PermitListView(ListView):
 
     model = PermitRequest
