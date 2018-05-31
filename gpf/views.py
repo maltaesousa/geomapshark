@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.http import HttpResponseRedirect,HttpResponse
-from .models import PermitRequest
+from .models import PermitRequest, Actor
 from .forms import PermitRequestForm
 
 from django.views.generic.list import ListView
@@ -19,8 +19,13 @@ def edit(request):
     if request.method == 'POST':
         form = PermitRequestForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            # do something.
+            # Gets the data before pushing it to database
+            permitRequest = form.save(commit=False)
+            # Add current user
+            permitRequest.company = Actor.objects.get(user=request.user)
+            # Save it in database
+            permitRequest.save()
+            #TODO return to somewhere.
     else:
         form = PermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
