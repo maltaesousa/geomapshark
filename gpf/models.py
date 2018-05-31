@@ -68,3 +68,33 @@ class Validation(models.Model):
 
     def __str__(self):
         return str(self.department) + '-' + str(self.permitrequest)
+
+class Archelogy(models.Model):
+
+    fiche = models.TextField(null=True)
+    commune = models.TextField(null=True)
+    descriptio = models.TextField(null=True)
+    note_carto = models.TextField(null=True)
+    annee_revi = models.TextField(null=True)
+    id_per = models.TextField(null=True)
+    lien_img = models.TextField(null=True)
+    note_detai = models.TextField(null=True)
+    shape_len = models.TextField(null=True)
+    date_maj = models.TextField(null=True)
+    guid = models.TextField(null=True)
+    mention = models.TextField(null=True)
+    fme_feat = models.TextField(null=True)
+    autre_ment = models.TextField(null=True)
+    multi_read = models.TextField(null=True)
+    autre_mesu = models.TextField(null=True)
+    shape_area = models.TextField(null=True)
+    objectid = models.TextField(null=True)
+    date_mesur = models.TextField(null=True)
+    eca = models.TextField(null=True)
+    url_recens = models.TextField(null=True)
+    mesure = models.TextField(null=True)
+    import_date = models.IntegerField(null=True)
+    geom = models.MultiPolygonField(srid=2056)
+
+    def __str__(self):
+        return 'Archelogy' + str(self.id)
