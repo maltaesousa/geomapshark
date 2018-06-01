@@ -22,6 +22,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('add/', views.add, name='add'),
     path('change/', views.change, name='change'),
-    path('listpermit/', views.listpermit, name='listpermit'),
-    path('listpermit/<int:pk>', views.permit_detail, name='permit-detail')
+    path('listpermit/', views.listpermit, name='list-permit'),
+    path('permitdetail/<int:pk>', views.permitdetail, name='permitdetail')
     ]

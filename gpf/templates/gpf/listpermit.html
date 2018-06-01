@@ -11,7 +11,7 @@
 </form>
 <ul>
 {% for permit in filter.qs %}
-  <li><a href="{{ permit.get_absolute_url }}">{{ permit.date_end }} - {{ permit.date_start }}</a></li>
+  <li><a href="{% url 'gpf:permitdetail' permit.pk %}">{{ permit.date_end }} - {{ permit.date_start }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

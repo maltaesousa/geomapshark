@@ -45,8 +45,13 @@ def change(request):
         form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
-@permission_required('gpf.permit_detail')
-def permit_detail(request):
+@permission_required('gpf.permitdetail')
+def permitdetail(request, pk):
+
+    try:
+        permit_id = PermitRequest.objects.get(pk=pk)
+    except PermitRequest.DoesNotExist:
+        raise Http404("Cette demande n'existe pas")
     form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
