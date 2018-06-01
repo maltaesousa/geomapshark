@@ -98,3 +98,7 @@ class Archelogy(models.Model):
 
     def __str__(self):
         return 'Archelogy' + str(self.id)
+
+class CommentTemplate(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField
