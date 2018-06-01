@@ -11,7 +11,7 @@ class SitOpenLayersWidget(forms.OSMWidget):
 class PermitRequestForm(forms.ModelForm):
     class Meta:
         model = PermitRequest
-        fields = '__all__'
+        exclude = ['company']
         widgets = {
             'geom': SitOpenLayersWidget(attrs={
                 'map_width': 800,

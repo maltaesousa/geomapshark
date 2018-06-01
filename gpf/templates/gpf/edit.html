@@ -2,10 +2,10 @@
 {% load bootstrap4 %}
 {% load static %}
 {% block content %}
-{{ formset.media }}
+{{ form.media }}
     <form method="post">
-        {% buttons submit='Enregistrer' reset="Annuler" %}{% endbuttons %}
         {% csrf_token %}
-        {% bootstrap_form formset %}
+        {% bootstrap_form form %}
+        {% buttons submit='Enregistrer' reset="Annuler" %}{% endbuttons %}
     </form>
 {% endblock %}

@@ -76,6 +76,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ["PGDATABASE"],
         'USER': os.environ["PGUSER"],
+        'HOST': os.environ["PGHOST"],
         'PORT': os.environ["PGPORT"],
         'PASSWORD': os.environ["PGPASSWORD"],
     }
