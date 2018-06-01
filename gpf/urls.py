@@ -16,12 +16,12 @@ Including another URLconf
 
 from django.urls import path
 from . import views
-from gpf.views import PermitListView
 
 app_name = 'gpf'
 urlpatterns = [
     path('', views.index, name='index'),
     path('add/', views.add, name='add'),
     path('change/', views.change, name='change'),
-    path('listpermit/', PermitListView.as_view(), name='permit-list'),
+    path('listpermit/', views.listpermit, name='list-permit'),
+    path('permitdetail/<int:pk>', views.permitdetail, name='permitdetail')
     ]

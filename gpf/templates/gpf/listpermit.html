@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% load bootstrap4 %}
+{% load static %}
+{% block content %}
+
+<h1>Permis de fouille</h1>
+
+<form method="get">
+  {% bootstrap_form filter.form %}
+  <button type="submit">Search</button>
+</form>
+<ul>
+{% for permit in filter.qs %}
+  <li><a href="{% url 'gpf:permitdetail' permit.pk %}">{{ permit.date_end }} - {{ permit.date_start }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
