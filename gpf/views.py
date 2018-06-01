@@ -45,6 +45,11 @@ def change(request):
         form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
+@permission_required('gpf.permit_detail')
+def permit_detail(request):
+    form = ChangePermitRequestForm()
+    return render(request, 'gpf/edit.html', {'form': form})
+
 
 #List of decorators for the class based view
 decorators = [login_required, permission_required('gpf.change_permitrequest')]

@@ -44,8 +44,8 @@ class CreditorType(models.Model):
 
 
 class PermitRequest(models.Model):
-    paid = models.BooleanField()
-    validated = models.BooleanField()
+    paid = models.BooleanField(default=False)
+    validated = models.BooleanField(default=False)
     date_start = models.DateField()
     date_end = models.DateField()
     date_effective_end = models.DateField(null=True)
@@ -58,8 +58,8 @@ class PermitRequest(models.Model):
     project_owner = models.ForeignKey(Actor, on_delete=models.SET_NULL, null=True, related_name='%(class)s_project_owner')
     sitetype = models.ForeignKey(SiteType, on_delete=models.SET_NULL, null=True)
     description = models.TextField()
-    has_archeology = models.BooleanField()
-    has_existing_archeology = models.BooleanField()
+    has_archeology = models.BooleanField(default=False)
+    has_existing_archeology = models.BooleanField(default=False)
     road_ref = models.IntegerField(null=True)
     road_number_ref = models.IntegerField(null=True)
     geom = models.MultiPointField(srid=2056)

@@ -20,7 +20,8 @@ from . import views
 app_name = 'gpf'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('edit/', views.edit, name='edit'),
+    path('add/', views.add, name='add'),
+    path('change/', views.change, name='change'),
     path('listpermit/', views.listpermit, name='listpermit'),
-    path('listpermit/<int:pk>', views.edit, name='permit-detail')
+    path('listpermit/<int:pk>', views.permit_detail, name='permit-detail')
     ]
