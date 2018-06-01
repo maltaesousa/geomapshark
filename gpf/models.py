@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 
 
 class Actor(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     address = models.CharField(max_length=100, null=True)
     zipcode = models.IntegerField(null=True)
     city = models.CharField(max_length=100, null=True)
