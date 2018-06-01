@@ -2,6 +2,7 @@
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User, Group
 
+
 class Actor(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, null=True)
@@ -17,6 +18,7 @@ class Actor(models.Model):
     def __str__(self):
         return self.name
 
+
 class Department(models.Model):
     #Extend group model
     group = models.OneToOneField(Group, on_delete=models.CASCADE)
@@ -29,11 +31,17 @@ class Department(models.Model):
     def __str__(self):
         return str(self.user)
 
+
 class SiteType(models.Model):
     description = models.CharField(max_length=100)
 
     def __str__(self):
         return self.description
+
+
+class CreditorType(models.Model):
+    name = models.CharField(max_length=100)
+
 
 class PermitRequest(models.Model):
     paid = models.BooleanField()
@@ -43,9 +51,9 @@ class PermitRequest(models.Model):
     date_effective_end = models.DateField(null=True)
     length = models.FloatField()
     width = models.FloatField()
-    has_road_marking = models.BooleanField()
+    road_marking_damaged = models.BooleanField()
     is_green_area = models.BooleanField()
-    invoiced = models.BooleanField()
+    invoice_to = models.ForeignKey(CreditorType, on_delete=models.SET_NULL, null=True)
     company = models.ForeignKey(Actor, on_delete=models.SET_NULL, null=True, related_name='%(class)s_company')
     project_owner = models.ForeignKey(Actor, on_delete=models.SET_NULL, null=True, related_name='%(class)s_project_owner')
     sitetype = models.ForeignKey(SiteType, on_delete=models.SET_NULL, null=True)
@@ -59,6 +67,7 @@ class PermitRequest(models.Model):
     def __str__(self):
         return 'Permit ' + str(self.id)
 
+
 class Validation(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     permitrequest = models.ForeignKey(PermitRequest, on_delete=models.CASCADE)
@@ -69,8 +78,8 @@ class Validation(models.Model):
     def __str__(self):
         return str(self.department) + '-' + str(self.permitrequest)
 
-class Archelogy(models.Model):
 
+class Archelogy(models.Model):
     fiche = models.TextField(null=True)
     commune = models.TextField(null=True)
     descriptio = models.TextField(null=True)
@@ -98,3 +107,8 @@ class Archelogy(models.Model):
 
     def __str__(self):
         return 'Archelogy' + str(self.id)
+
+
+class CommentTemplate(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField
