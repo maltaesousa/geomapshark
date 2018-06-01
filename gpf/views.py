@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import Actor, Archelogy, PermitRequest
-from .forms import PermitRequestForm
+from .forms import AddPermitRequestForm, ChangePermitRequestForm
 
 from django.views.generic.list import ListView
 from django.contrib.auth.decorators import login_required, permission_required
@@ -13,11 +13,11 @@ from django.utils.decorators import method_decorator
 def index(request):
     return render(request, 'gpf/index.html', {})
 
-@login_required
-def edit(request):
 
+@login_required
+def add(request):
     if request.method == 'POST':
-        form = PermitRequestForm(request.POST, request.FILES)
+        form = AddPermitRequestForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.has_archeology = archeo_checker(form.cleaned_data['geom'])
             # Gets the data before pushing it to database
@@ -28,16 +28,28 @@ def edit(request):
             permitRequest.save()
             #TODO return to somewhere.
     else:
-        form = PermitRequestForm()
+        form = AddPermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
+
+@permission_required('gpf.change_permitrequest')
+def change(request):
+    if request.method == 'POST':
+        form = ChangePermitRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.has_archeology = archeo_checker(form.cleaned_data['geom'])
+            # Save it in database
+            form.save()
+            #TODO return to somewhere.
+    else:
+        form = ChangePermitRequestForm()
+    return render(request, 'gpf/edit.html', {'form': form})
+
 
 #List of decorators for the class based view
 decorators = [login_required, permission_required('gpf.change_permitrequest')]
-
 #This is the way to decorate a class based view
 @method_decorator(decorators, name='dispatch')
 class PermitListView(ListView):
-
     model = PermitRequest
     paginate_by = 15
     def get_context_data(self, **kwargs):
@@ -47,7 +59,6 @@ class PermitListView(ListView):
 
 
 def archeo_checker(geom):
-
     archeo_polygons= Archelogy.objects.filter(geom__intersects=geom)
     archeo_polygons_eca = []
     for polygon in archeo_polygons:
