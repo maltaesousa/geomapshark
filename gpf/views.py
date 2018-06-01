@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import Actor, Archelogy, PermitRequest
 from .forms import PermitRequestForm
+from .filters import PermitRequestFilter
 
 from django.views.generic.list import ListView
 from django.contrib.auth.decorators import login_required, permission_required
@@ -35,15 +36,13 @@ def edit(request):
 decorators = [login_required, permission_required('gpf.change_permitrequest')]
 
 #This is the way to decorate a class based view
-@method_decorator(decorators, name='dispatch')
-class PermitListView(ListView):
+@login_required
+def listpermit(request):
 
-    model = PermitRequest
-    paginate_by = 15
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
+    filter = PermitRequestFilter(request.GET, queryset=PermitRequest.objects.all())
+
+    return render(request, 'gpf/listpermit.html', {'filter': filter})
+
 
 
 def archeo_checker(geom):
