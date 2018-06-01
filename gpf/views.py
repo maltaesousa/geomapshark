@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.list import ListView
 
+from .filters import PermitRequestFilter
 from .forms import AddPermitRequestForm, ChangePermitRequestForm, ActorForm
 from .models import Actor, Archelogy, PermitRequest
 
@@ -46,6 +44,16 @@ def permitRequestChange(request):
         form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
+@permission_required('gpf.permitdetail')
+def permitdetail(request, pk):
+
+    try:
+        permit_id = PermitRequest.objects.get(pk=pk)
+    except PermitRequest.DoesNotExist:
+        raise Http404("Cette demande n'existe pas")
+    form = ChangePermitRequestForm()
+    return render(request, 'gpf/edit.html', {'form': form})
+
 
 def actorAddPopup(request):
     form = ActorForm(request.POST or None)
@@ -75,17 +83,13 @@ def get_actor_id(request):
     return HttpResponse("/")
 
 
-#List of decorators for the class based view
-decorators = [login_required, permission_required('gpf.change_permitrequest')]
-#This is the way to decorate a class based view
-@method_decorator(decorators, name='dispatch')
-class PermitListView(ListView):
-    model = PermitRequest
-    paginate_by = 15
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
+@login_required
+def listpermit(request):
+
+    filter = PermitRequestFilter(request.GET, queryset=PermitRequest.objects.all())
+
+    return render(request, 'gpf/listpermit.html', {'filter': filter})
+
 
 
 def archeo_checker(geom):
