@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.http import HttpResponseRedirect,HttpResponse
-from .models import PermitRequest, Archelogy
+from .models import Actor, Archelogy, PermitRequest
 from .forms import PermitRequestForm
 
 from django.views.generic.list import ListView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 
 
@@ -17,16 +17,25 @@ def index(request):
 def edit(request):
 
     if request.method == 'POST':
-        formset = PermitRequestForm(request.POST, request.FILES)
-        if formset.is_valid():
-            formset.instance.has_archeology = archeo_checker(formset.cleaned_data['geom'])
-            formset.save()
-
+        form = PermitRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.has_archeology = archeo_checker(form.cleaned_data['geom'])
+            # Gets the data before pushing it to database
+            permitRequest = form.save(commit=False)
+            # Add current user
+            permitRequest.company = Actor.objects.get(user=request.user)
+            # Save it in database
+            permitRequest.save()
+            #TODO return to somewhere.
     else:
-        formset = PermitRequestForm()
-    return render(request, 'gpf/edit.html', {'formset': formset})
+        form = PermitRequestForm()
+    return render(request, 'gpf/edit.html', {'form': form})
 
-@method_decorator(login_required, name='dispatch')
+#List of decorators for the class based view
+decorators = [login_required, permission_required('gpf.change_permitrequest')]
+
+#This is the way to decorate a class based view
+@method_decorator(decorators, name='dispatch')
 class PermitListView(ListView):
 
     model = PermitRequest
