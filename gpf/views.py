@@ -9,6 +9,7 @@ from .models import Actor, Archelogy, PermitRequest
 
 import json
 
+
 @login_required
 def index(request):
     return render(request, 'gpf/index.html', {})
@@ -44,6 +45,7 @@ def permitRequestChange(request):
         form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
+
 @permission_required('gpf.permitdetail')
 def permitdetail(request, pk):
 
@@ -57,6 +59,7 @@ def permitdetail(request, pk):
 
 def actorAddPopup(request):
     form = ActorForm(request.POST or None)
+
     if form.is_valid():
         instance = form.save()
         # changes the value of the '#id_actor'
@@ -67,6 +70,7 @@ def actorAddPopup(request):
 def actorChangePopup(request, pk=None):
     instance = get_object_or_404(Actor, pk=pk)
     form = ActorForm(request.POST or None, instance=instance)
+
     if form.is_valid():
         instance = form.save()
         return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % (instance.pk, instance))
@@ -77,7 +81,7 @@ def actorChangePopup(request, pk=None):
 def get_actor_id(request):
     if request.is_ajax():
         actor_name = request.GET['actor_name']
-        actor_id = Actor.objects.get(name = actor_name).id
+        actor_id = Actor.objects.get(name=actor_name).id
         data = {'actor_id': actor_id,}
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse("/")
