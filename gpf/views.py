@@ -1,13 +1,15 @@
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
-from django.http import HttpResponseRedirect,HttpResponse
-from .models import Actor, Archelogy, PermitRequest
-from .forms import AddPermitRequestForm, ChangePermitRequestForm
-
-from django.views.generic.list import ListView
-from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.list import ListView
 
+from .forms import AddPermitRequestForm, ChangePermitRequestForm, ActorForm
+from .models import Actor, Archelogy, PermitRequest
+
+import json
 
 @login_required
 def index(request):
@@ -15,7 +17,7 @@ def index(request):
 
 
 @login_required
-def add(request):
+def permitRequestAdd(request):
     if request.method == 'POST':
         form = AddPermitRequestForm(request.POST, request.FILES)
         if form.is_valid():
@@ -26,23 +28,51 @@ def add(request):
             permitRequest.company = Actor.objects.get(user=request.user)
             # Save it in database
             permitRequest.save()
-            #TODO return to somewhere.
+            return HttpResponseRedirect("/")
     else:
         form = AddPermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
 
+
 @permission_required('gpf.change_permitrequest')
-def change(request):
+def permitRequestChange(request):
     if request.method == 'POST':
         form = ChangePermitRequestForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.has_archeology = archeo_checker(form.cleaned_data['geom'])
-            # Save it in database
             form.save()
-            #TODO return to somewhere.
+            return HttpResponseRedirect("/")
     else:
         form = ChangePermitRequestForm()
     return render(request, 'gpf/edit.html', {'form': form})
+
+
+def actorAddPopup(request):
+    form = ActorForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        # changes the value of the '#id_actor'
+        return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % (instance.pk, instance))
+    return render(request, 'gpf/actor_form.html', {'form' : form})
+
+
+def actorChangePopup(request, pk=None):
+    instance = get_object_or_404(Actor, pk=pk)
+    form = ActorForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % (instance.pk, instance))
+    return render(request, "gpf/actor_form.html", {'form' : form})
+
+
+@csrf_exempt
+def get_actor_id(request):
+    if request.is_ajax():
+        actor_name = request.GET['actor_name']
+        actor_id = Actor.objects.get(name = actor_name).id
+        data = {'actor_id': actor_id,}
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse("/")
 
 
 #List of decorators for the class based view
