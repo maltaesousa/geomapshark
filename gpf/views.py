@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
@@ -6,6 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 from .filters import PermitRequestFilter
 from .forms import AddPermitRequestForm, ChangePermitRequestForm, ActorForm
 from .models import Actor, Archelogy, PermitRequest
+from .tables import PermitRequestTable, PermitExportTable
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin, SingleTableView
+from django_tables2.export.views import ExportMixin
+
+
 
 import json
 
@@ -87,14 +94,19 @@ def get_actor_id(request):
     return HttpResponse("/")
 
 
-@login_required
-def listpermit(request):
+@method_decorator(login_required, name="dispatch")
+class PermitRequestListView(SingleTableMixin, FilterView):
+    paginate_by = 10
+    table_class = PermitRequestTable
+    model = PermitRequest
+    template_name = 'gpf/list.html'
 
-    filter = PermitRequestFilter(request.GET, queryset=PermitRequest.objects.all())
+    filterset_class = PermitRequestFilter
 
-    return render(request, 'gpf/listpermit.html', {'filter': filter})
-
-
+class PermitExportView(ExportMixin, SingleTableView):
+    table_class = PermitExportTable
+    model = PermitRequest
+    template_name = 'django_tables2/bootstrap.html'
 
 def archeo_checker(geom):
     archeo_polygons= Archelogy.objects.filter(geom__intersects=geom)
