@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+{% load bootstrap4 %}
+{% load static %}
+{% block content %}
+{% load render_table from django_tables2 %}
+
+  <style>
+
+    #exports{
+      float:right;
+      margin-bottom: 10px;
+    }
+  </style>
+
+  <h1>Permis de fouille</h1>
+  {{ filter.form.media }}
+  <form method="get">
+    {% bootstrap_form filter.form layout='horizontal' %}
+    {% bootstrap_button "Filter" button_type="submit" button_class="btn-primary" %}
+
+  </form>
+  <div id="exports">
+    {% bootstrap_button "XLS" button_type="link"  href="../listexport?_export=csv" button_class="btn-primary" size="small" %}
+    {% bootstrap_button "CSV" button_type="link"  href="../listexport?_export=xls" button_class="btn-primary" size="small" %}
+    {% bootstrap_button "ODS" button_type="link"  href="../listexport?_export=ods" button_class="btn-primary" size="small" %}
+  </div>
+
+{% render_table table %}
+
+{% endblock %}

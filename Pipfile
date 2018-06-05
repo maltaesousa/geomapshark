@@ -9,6 +9,10 @@ django = "*"
 "psycopg2" = "*"
 "django-bootstrap4" = "*"
 django-filter = "*"
+django-bootstrap-datepicker = "*"
+django-bootstrap-daterangepicker = "*"
+"django-tables2" = "*"
+tablib = "*"
 
 [dev-packages]
 pylint = "*"
