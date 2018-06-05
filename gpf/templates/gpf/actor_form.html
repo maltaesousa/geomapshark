@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<div class = "container">
+	<h1>Actor Form</h1>
+	<form method='POST' action='' enctype="multipart/form-data" novalidate id="actor-form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons submit='Enregistrer' reset="Annuler" %}{% endbuttons %}
+	</form>
+</div>
+{% endblock %}
