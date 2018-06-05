@@ -3,24 +3,6 @@
 {% load static %}
 {% block script %}
 
-<script type="text/javascript">
-function showEditPopup(url) {
-    var win = window.open(url, "Edit", 
-        'height=500,width=800,resizable=yes,scrollbars=yes');
-    return false;
-}
-function showAddAnotherPopup(triggeringLink) {
-    var name = triggeringLink.id.replace(/^add_/, '');
-    href = triggeringLink.href;
-    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-    win.focus();
-    return false;
-}
-function closePopup(win, newID, newRepr, id) {
-    $('#id_project_owner').append('<option value="' + newID + '" selected >' + newRepr + '</option>')
-    win.close();
-}
-
 </script>
 {% endblock %}
 {% block content %}
@@ -30,24 +12,4 @@ function closePopup(win, newID, newRepr, id) {
         {% bootstrap_form form %}
         {% buttons submit='Enregistrer' reset="Annuler" %}{% endbuttons %}
     </form>
-
-<script type="text/javascript">
-$("#edit_actor").click(function(){
-    actor_name = $("#id_project_owner option:selected").text();
-    var data = {"actor_name":actor_name};
-    $.ajax({
-        type : 'GET',
-        url :  '/gpf/actor/ajax/get_actor_id',
-        data : data,
-        success : function(data){
-            var url = "/gpf/actor/" + data['actor_id'] + "/change";
-            showEditPopup(url);
-        },
-        error: function(data) {
-            alert("Something Went Wrong"); 
-        }
-    });
-})
-</script>
-
 {% endblock %}
