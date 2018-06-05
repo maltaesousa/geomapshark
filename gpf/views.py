@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from .filters import PermitRequestFilter
@@ -16,7 +17,7 @@ def index(request):
 
 
 @login_required
-def permitRequestAdd(request):
+def permitRequestAdd(request, project_owner_id):
     if request.method == 'POST':
         form = AddPermitRequestForm(request.POST, request.FILES)
         if form.is_valid():
@@ -25,6 +26,7 @@ def permitRequestAdd(request):
             permitRequest = form.save(commit=False)
             # Add current user
             permitRequest.company = Actor.objects.get(user=request.user)
+            permitRequest.project_owner = Actor.objects.get(pk=project_owner_id)
             # Save it in database
             permitRequest.save()
             return HttpResponseRedirect("/")
@@ -57,34 +59,27 @@ def permitdetail(request, pk):
     return render(request, 'gpf/edit.html', {'form': form})
 
 
-def actorAddPopup(request):
+@login_required
+def actorAdd(request):
     form = ActorForm(request.POST or None)
 
     if form.is_valid():
-        instance = form.save()
-        # changes the value of the '#id_actor'
-        return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % (instance.pk, instance))
+        new_actor = form.save()
+        return HttpResponseRedirect(
+            reverse('gpf:permit-request-add', args=(new_actor.id,)))
     return render(request, 'gpf/actor_form.html', {'form' : form})
 
 
-def actorChangePopup(request, pk=None):
+def actorChange(request, pk=None):
     instance = get_object_or_404(Actor, pk=pk)
     form = ActorForm(request.POST or None, instance=instance)
 
     if form.is_valid():
         instance = form.save()
-        return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % (instance.pk, instance))
+        return HttpResponse(
+            '<script>opener.closePopup(window, "%s", "%s", "#id_actor");</script>' % \
+            (instance.pk, instance))
     return render(request, "gpf/actor_form.html", {'form' : form})
-
-
-@csrf_exempt
-def get_actor_id(request):
-    if request.is_ajax():
-        actor_name = request.GET['actor_name']
-        actor_id = Actor.objects.get(name=actor_name).id
-        data = {'actor_id': actor_id,}
-        return HttpResponse(json.dumps(data), content_type='application/json')
-    return HttpResponse("/")
 
 
 @login_required
