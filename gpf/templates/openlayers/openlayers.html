@@ -1,0 +1,57 @@
+{% load i18n l10n %}
+<style type="text/css">{% block map_css %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+    #{{ id }}_map { width: 100%; height: {{ map_height }}px; }
+    #{{ id }}_map .aligned label { float: none; }
+    #{{ id }}_div_map { position: relative; vertical-align: top; }
+    {% if not display_raw %}#{{ id }} { display: none; }{% endif %}
+    {% endblock %}
+</style>
+
+<div id="{{ id }}_div_map">
+    <div id="{{ id }}_map"></div>
+    {% if not disabled %}<span class="clear_features"><a href="javascript:{{ module }}.clearFeatures()">{% trans "Delete all Features" %}</a></span>{% endif %}
+    {% if display_raw %}<p>{% trans "Debugging window (serialized value)" %}</p>{% endif %}
+    <textarea id="{{ id }}" class="vSerializedField required" cols="150" rows="10" name="{{ name }}">{{ serialized }}</textarea>
+    <script type="text/javascript">
+        {% block map_options %}var map_options = {};{% endblock %}
+        {% block base_layer %}
+        proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
+        var layer = 'asitvd.fond_couleur';
+        var projection = ol.proj.get('EPSG:2056');
+        var parser = new ol.format.WMTSCapabilities();
+
+        var base_layer = {};
+
+        fetch('https://ows.asitvd.ch/wmts?request=GetCapabilities').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            var result = parser.read(text);
+            var options = ol.source.WMTS.optionsFromCapabilities(result, {
+            layer: layer,
+            matrixSet: '2056',
+            projection: projection,
+            });
+            
+            base_layer = new ol.layer.Tile({
+                source: new ol.source.WMTS(/** @type {!olx.source.WMTSOptions} */ (options)),
+            });
+
+            var options = {
+                default_lon: 6.64513,
+                default_lat: 46.77808,
+                default_zoom: 15,
+                base_layer: base_layer,
+                geom_name: '{{ geom_type }}',
+                id: '{{ id }}',
+                map_id: '{{ id }}_map',
+                map_options: map_options,
+                map_srid: {{ map_srid|unlocalize }},
+                name: '{{ name }}'
+            };
+            
+            var {{ module }} = new MapWidget(options);
+        });
+
+        {% endblock %}
+    </script>
+</div>
