@@ -3,9 +3,9 @@ from django.contrib.gis import forms
 from django.forms import widgets
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from bootstrap_datepicker.widgets import DatePicker
 
 from .models import PermitRequest, Actor, Validation
-
 
 class SitOpenLayersWidget(forms.OSMWidget):
     @property
@@ -55,8 +55,18 @@ class AddPermitRequestForm(forms.ModelForm):
                 'map_height': 500,
                 'map_srid': 2056
             }),
-            'date_start': forms.SelectDateWidget(),
-            'date_end': forms.SelectDateWidget(),
+            'date_start': DatePicker(
+                options={
+                    "format": "mm/dd/yyyy",
+                    "autoclose": True
+                    }
+                ),
+            'date_end': DatePicker(
+                options={
+                    "format": "mm/dd/yyyy",
+                    "autoclose": True
+                    }
+                ),
             'date_effective_end': forms.SelectDateWidget(),
             'project_owner': RelatedFieldWidgetCanAdd(Actor, related_url='gpf:actor_add')
         }

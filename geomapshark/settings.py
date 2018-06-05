@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django_filters',
     'bootstrap4',
+    'bootstrap_datepicker',
+    'django_tables2',
     'gpf'
 ]
 

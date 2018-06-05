@@ -9,6 +9,7 @@ urlpatterns = [
     path('actor/ajax/get_actor_id', views.get_actor_id, name='get_actor_id'),
     path('add/', views.permitRequestAdd, name='permit-request-add'),
     path('change/', views.permitRequestChange, name='permit-request-change'),
-    path('listpermit/', views.listpermit, name='list-permit'),
+    path('list/', views.PermitRequestListView.as_view(), name='list'),
+    path('listexport/', views.PermitExportView.as_view(), name='listexport'),
     path('permitdetail/<int:pk>', views.permitdetail, name='permitdetail')
     ]
