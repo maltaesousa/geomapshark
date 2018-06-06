@@ -37,9 +37,9 @@
             });
 
             var options = {
-                default_lon: 6.64513,
-                default_lat: 46.77808,
-                default_zoom: 15,
+                default_lon: {{ default_lon|unlocalize }},
+                default_lat: {{ default_lat|unlocalize }},
+                default_zoom: {{ default_zoom|unlocalize }},
                 base_layer: base_layer,
                 geom_name: '{{ geom_type }}',
                 id: '{{ id }}',

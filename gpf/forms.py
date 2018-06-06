@@ -14,8 +14,8 @@ class SitOpenLayersWidget(forms.OSMWidget):
         return forms.Media(
             css={'all': ('libs/js/openlayers/ol.css',)},
             js=('libs/js/openlayers/ol-debug.js',
-                'customWidgets/sitMapWidget/sitMapWidget.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4-src.js'))
+                'libs/js/proj4js/proj4-src.js',
+                'customWidgets/sitMapWidget/sitMapWidget.js'))
 
 
 class AddPermitRequestForm(forms.ModelForm):
@@ -30,7 +30,10 @@ class AddPermitRequestForm(forms.ModelForm):
             'geom': SitOpenLayersWidget(attrs={
                 'map_width': 800,
                 'map_height': 500,
-                'map_srid': 2056
+                'map_srid': 2056,
+                'default_lon': 6.64513,
+                'default_lat': 46.77808,
+                'default_zoom': 15
             }),
             'date_start': DatePicker(
                 options={
